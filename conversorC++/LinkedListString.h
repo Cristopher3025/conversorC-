@@ -3,34 +3,35 @@
 #include <cstddef>
 #include <stdexcept>
 
-// Lista simplemente enlazada que almacena std::string
-
-
+// ----- Clase LinkedListString -----
 class LinkedListString {
 private:
+    // ----- Nodo -----
     struct Node {
         std::string data;
         Node* next;
-        Node(const std::string& d) : data(d), next(nullptr) {}
+        Node(const std::string& value) : data(value), next(nullptr) {}
     };
 
+    // ----- Atributos -----
     Node* head;
     Node* tail;
-    std::size_t n;
+    std::size_t count;
 
 public:
+    // ----- Constructores y Destructor -----
     LinkedListString();
     ~LinkedListString();
-
     LinkedListString(const LinkedListString& other);
     LinkedListString& operator=(const LinkedListString& other);
 
-    void pushBack(const std::string& x);
-    void pushFront(const std::string& x);
+    // ----- Funciones públicas -----
+    void pushBack(const std::string& value);
+    void pushFront(const std::string& value);
     std::string popFront();
-    bool empty() const { return n == 0; }
-    std::size_t size() const { return n; }
+    bool empty() const { return count == 0; }
+    std::size_t size() const { return count; }
     void clear();
-
     void print() const;
 };
+
