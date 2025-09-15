@@ -1,74 +1,110 @@
 ﻿#include "Parser.h"
-#include "TemplateLibrary.h"
+#include <string>
 
-// ----- Helpers locales (manuales) -----
-static std::string toLowerCopy2(const std::string& text)
-{
+
+static std::string toLowerManual(const std::string& text) {
     std::string out;
-    out.reserve(text.size());
-    for (unsigned int i = 0; i < text.size(); ++i) {
+    for (size_t i = 0; i < text.size(); i++) {
         char c = text[i];
-        if (c >= 'A' && c <= 'Z') c = static_cast<char>(c - 'A' + 'a');
+        if (c >= 'A' && c <= 'Z') {
+            c = char(c - 'A' + 'a');
+        }
         out.push_back(c);
     }
     return out;
 }
 
-// ----- Busca substring de forma manual -----
-static int indexOf(const std::string& haystack, const std::string& needle)
-{
-    if (needle.empty() || haystack.size() < needle.size()) return -1;
-    for (unsigned int i = 0; i + needle.size() <= haystack.size(); ++i) {
+
+static bool containsWord(const std::string& text, const std::string& word) {
+    if (word.size() > text.size()) return false;
+    for (size_t i = 0; i + word.size() <= text.size(); i++) {
         bool ok = true;
-        for (unsigned int j = 0; j < needle.size(); ++j) {
-            if (haystack[i + j] != needle[j]) { ok = false; break; }
-        }
-        if (ok) return static_cast<int>(i);
-    }
-    return -1;
-}
-
-// ----- Extrae un número simple desde el texto -----
-static std::string extractFirstNumber(const std::string& textLower)
-{
-    std::string number;
-    for (unsigned int i = 0; i < textLower.size(); ++i) {
-        char c = textLower[i];
-        if (c >= '0' && c <= '9') {
-            number.push_back(c);
-            unsigned int k = i + 1;
-            while (k < textLower.size() && textLower[k] >= '0' && textLower[k] <= '9') {
-                number.push_back(textLower[k]);
-                ++k;
+        for (size_t j = 0; j < word.size(); j++) {
+            if (text[i + j] != word[j]) {
+                ok = false;
+                break;
             }
-            break;
+        }
+        if (ok) return true;
+    }
+    return false;
+}
+
+
+static void extractTwoNumbers(const std::string& text, std::string& n1, std::string& n2) {
+    n1 = "";
+    n2 = "";
+    int found = 0;
+
+    for (size_t i = 0; i < text.size(); i++) {
+        char c = text[i];
+        if (c >= '0' && c <= '9') {
+            std::string num = "";
+            while (i < text.size() && text[i] >= '0' && text[i] <= '9') {
+                num.push_back(text[i]);
+                i++;
+            }
+            if (found == 0) {
+                n1 = num;
+                found++;
+            }
+            else if (found == 1) {
+                n2 = num;
+                break;
+            }
         }
     }
-    if (number.empty()) number = "10"; // valor por defecto
-    return number;
+    if (n1 == "") n1 = "0";
+    if (n2 == "") n2 = "0";
 }
 
-// ----- Traducción básica por palabras clave → snippet -----
-std::string translateLineToSnippet(const std::string& inputLine)
-{
-    const std::string lower = toLowerCopy2(inputLine);
+// ---- Traducción principal ----
+std::string translateLineToSnippet(const std::string& inputLine) {
+    std::string lower = toLowerManual(inputLine);
 
-    // Caso: "crear lista de N ..." → arreglo simple por ahora
-    if (indexOf(lower, "crear lista") >= 0) {
-        std::string sizeText = extractFirstNumber(lower);
-        return makeArrayTemplate("lista1", sizeText);
+    // Crear lista
+    if (containsWord(lower, "crear lista")) {
+        return "int lista[10]; // ejemplo de lista";
     }
 
-    // Caso: "pila" → esqueleto de pila
-    if (indexOf(lower, "pila") >= 0) {
-        return makeStackTemplate("miPila");
+    // Crear pila
+    if (containsWord(lower, "crear pila")) {
+        return "// instancia de pila manual\nStack miPila;";
     }
 
-    // Caso: "crear clase ... con pila ..."
-    if (indexOf(lower, "crear clase") >= 0 && indexOf(lower, "pila") >= 0) {
-        return makeClassWithStackTemplate("MiClase", "pilaInterna");
+    // Crear cola
+    if (containsWord(lower, "crear cola")) {
+        return "// instancia de cola manual\nQueue miCola;";
     }
 
-    // Si no se reconoce, devolver cadena vacía
-    return "";
+    // Operaciones aritméticas
+    if (containsWord(lower, "sumar")) {
+        std::string a, b;
+        extractTwoNumbers(lower, a, b);
+        return "int resultado = " + a + " + " + b + ";";
+    }
+    if (containsWord(lower, "restar")) {
+        std::string a, b;
+        extractTwoNumbers(lower, a, b);
+        return "int resultado = " + a + " - " + b + ";";
+    }
+    if (containsWord(lower, "multiplicar")) {
+        std::string a, b;
+        extractTwoNumbers(lower, a, b);
+        return "int resultado = " + a + " * " + b + ";";
+    }
+    if (containsWord(lower, "dividir")) {
+        std::string a, b;
+        extractTwoNumbers(lower, a, b);
+        return "int resultado = " + a + " / " + b + ";";
+    }
+
+    
+    if (containsWord(lower, "imprimir")) {
+        return "std::cout << resultado << std::endl;";
+    }
+
+    
+    return "// instruccion no reconocida";
 }
+

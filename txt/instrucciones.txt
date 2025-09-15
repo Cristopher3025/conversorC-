@@ -1,0 +1,4 @@
+crear lista de 5 numeros
+crear pila
+sumar 7 y 2
+imprimir resultado

@@ -2,7 +2,7 @@
 #include <string>
 
 // ----- TemplateLibrary: generadores de snippets de código -----
-// Sin STL de contenedores; solo std::string.
+
 
 // ----- Plantillas básicas -----
 std::string makeArrayTemplate(const std::string& arrayName, const std::string& sizeText);

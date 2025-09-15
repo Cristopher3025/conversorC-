@@ -4,33 +4,43 @@
 #include "LinkedListString.h"
 #include "Tokenizer.h"
 #include "Parser.h"
+#include "Stack.h"
+#include "Queue.h"
 
-// ----- Programa principal -----
 int main() {
     std::cout << "===== Conversor Lenguaje Natural a C++ =====\n";
 
-    // ----- Leer archivo de entrada -----
-    std::string fileName = "instrucciones.txt";
-    std::ifstream inputFile(fileName);
-
+    // Archivo de entrada (instrucciones en lenguaje natural)
+    std::ifstream inputFile("../txt/instrucciones.txt");
     if (!inputFile.is_open()) {
-        std::cout << "No se pudo abrir el archivo: " << fileName << "\n";
+        std::cout << "No se pudo abrir ../txt/instrucciones.txt\n";
         return 1;
     }
 
-    // ----- Procesar línea por línea -----
+    // Archivo de salida (código C++ generado)
+    std::ofstream outputFile("../salidas/output.cpp");
+    if (!outputFile.is_open()) {
+        std::cout << "No se pudo crear ../salidas/output.cpp\n";
+        return 1;
+    }
+
+    // Cabecera básica del archivo C++
+    outputFile << "#include <iostream>\n";
+    outputFile << "using namespace std;\n\n";
+    outputFile << "int main() {\n";
+
     std::string line;
     int lineNumber = 1;
 
     while (std::getline(inputFile, line)) {
         std::cout << "\nInstruccion " << lineNumber << ": " << line << "\n";
 
-        // 1) Tokenizar (guardar en lista enlazada manual)
+        // Tokenizar con tu lista enlazada
         LinkedListString tokens = tokenize(line);
         std::cout << "Tokens: ";
         tokens.print();
 
-        // 2) Parsear → generar snippet C++
+        // Parsear a código
         std::string snippet = translateLineToSnippet(line);
 
         if (snippet.empty()) {
@@ -38,14 +48,23 @@ int main() {
         }
         else {
             std::cout << "Codigo generado:\n" << snippet << "\n";
+            outputFile << "    " << snippet << "\n"; // escribe en ../salidas/output.cpp
         }
 
         lineNumber++;
     }
 
+    // Cierre del main en output.cpp
+    outputFile << "    return 0;\n";
+    outputFile << "}\n";
+
     inputFile.close();
+    outputFile.close();
 
     std::cout << "\n===== Fin de la demostracion =====\n";
+    std::cout << "Archivo '../salidas/output.cpp' generado.\n";
+
     return 0;
 }
+
 
