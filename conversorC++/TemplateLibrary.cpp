@@ -1,6 +1,6 @@
 #include "TemplateLibrary.h"
 
-// ----- toLower manual -----
+
 static std::string toLowerCopy(const std::string& text)
 {
     std::string out;
@@ -13,7 +13,7 @@ static std::string toLowerCopy(const std::string& text)
     return out;
 }
 
-// ----- Arreglo simple -----
+
 std::string makeArrayTemplate(const std::string& arrayName, const std::string& sizeText)
 {
     std::string code;
@@ -22,26 +22,59 @@ std::string makeArrayTemplate(const std::string& arrayName, const std::string& s
     return code;
 }
 
-// ----- Lista (esqueleto) -----
-std::string makeListTemplate(const std::string& listName)
-{
+
+std::string makeListTemplate(const std::string& listName) {
     std::string code;
-    code += "// ----- Esqueleto de lista (manual) -----\n";
-    code += "/* TODO: implementar estructura lista \"" + listName + "\" usando nodos y punteros */\n";
+    code += "// ====== Definicion de Lista Simple ======\n";
+    code += "struct NodeLista {\n";
+    code += "    int data;\n";
+    code += "    NodeLista* next;\n";
+    code += "};\n\n";
+    code += "struct Lista {\n";
+    code += "    NodeLista* head;\n";
+    code += "    Lista() { head = nullptr; }\n\n";
+    code += "    void add(int val) {\n";
+    code += "        NodeLista* nuevo = new NodeLista{val, nullptr};\n";
+    code += "        if (!head) { head = nuevo; return; }\n";
+    code += "        NodeLista* tmp = head;\n";
+    code += "        while (tmp->next) tmp = tmp->next;\n";
+    code += "        tmp->next = nuevo;\n";
+    code += "    }\n";
+    code += "};\n";
     return code;
 }
 
-// ----- Pila (esqueleto) -----
-std::string makeStackTemplate(const std::string& stackName)
-{
+
+
+std::string makeStackTemplate(const std::string& stackName) {
     std::string code;
-    code += "// ----- Esqueleto de pila (manual) -----\n";
-    code += "/* TODO: implementar pila \"" + stackName + "\" con nodos o arreglo circular */\n";
-    code += "/* Operaciones: push, pop, top, empty */\n";
+    code += "// ====== Definicion de Pila ======\n";
+    code += "struct NodePila {\n";
+    code += "    int data;\n";
+    code += "    NodePila* next;\n";
+    code += "};\n\n";
+    code += "struct Pila {\n";
+    code += "    NodePila* top;\n";
+    code += "    Pila() { top = nullptr; }\n\n";
+    code += "    void push(int val) {\n";
+    code += "        NodePila* nuevo = new NodePila{val, top};\n";
+    code += "        top = nuevo;\n";
+    code += "    }\n\n";
+    code += "    int pop() {\n";
+    code += "        if (!top) return -1;\n";
+    code += "        int val = top->data;\n";
+    code += "        NodePila* tmp = top;\n";
+    code += "        top = top->next;\n";
+    code += "        delete tmp;\n";
+    code += "        return val;\n";
+    code += "    }\n\n";
+    code += "    bool isEmpty() { return top == nullptr; }\n";
+    code += "};\n";
     return code;
 }
 
-// ----- Clase con pila interna -----
+
+
 std::string makeClassWithStackTemplate(const std::string& className, const std::string& stackFieldName)
 {
     std::string code;
@@ -57,3 +90,35 @@ std::string makeClassWithStackTemplate(const std::string& className, const std::
     code += "};\n";
     return code;
 }
+
+std::string makeQueueTemplate(const std::string& queueName) {
+    std::string code;
+    code += "// ====== Definicion de Cola ======\n";
+    code += "struct NodeCola {\n";
+    code += "    int data;\n";
+    code += "    NodeCola* next;\n";
+    code += "};\n\n";
+    code += "struct Cola {\n";
+    code += "    NodeCola* front;\n";
+    code += "    NodeCola* rear;\n";
+    code += "    Cola() { front = rear = nullptr; }\n\n";
+    code += "    void enqueue(int val) {\n";
+    code += "        NodeCola* nuevo = new NodeCola{val, nullptr};\n";
+    code += "        if (!rear) { front = rear = nuevo; return; }\n";
+    code += "        rear->next = nuevo;\n";
+    code += "        rear = nuevo;\n";
+    code += "    }\n\n";
+    code += "    int dequeue() {\n";
+    code += "        if (!front) return -1;\n";
+    code += "        int val = front->data;\n";
+    code += "        NodeCola* tmp = front;\n";
+    code += "        front = front->next;\n";
+    code += "        if (!front) rear = nullptr;\n";
+    code += "        delete tmp;\n";
+    code += "        return val;\n";
+    code += "    }\n\n";
+    code += "    bool isEmpty() { return front == nullptr; }\n";
+    code += "};\n";
+    return code;
+}
+

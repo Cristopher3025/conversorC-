@@ -112,3 +112,13 @@ void LinkedListString::print() const
     }
     std::cout << "]\n";
 }
+std::string LinkedListString::toString() const {
+    std::string result;
+    Node* current = head;
+    while (current != nullptr) {
+        result += current->data;   // agrega el token
+        if (current->next != nullptr) result += " "; // separador
+        current = current->next;
+    }
+    return result;
+}

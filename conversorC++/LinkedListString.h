@@ -33,5 +33,8 @@ public:
     std::size_t size() const { return count; }
     void clear();
     void print() const;
+    
+    std::string toString() const;
+
 };
 

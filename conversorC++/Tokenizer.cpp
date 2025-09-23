@@ -1,6 +1,6 @@
 ﻿#include "Tokenizer.h"
 
-// ----- Helpers manuales -----
+
 static bool isAlphabetic(char character) {
     return (character >= 'A' && character <= 'Z') || (character >= 'a' && character <= 'z');
 }
@@ -24,7 +24,7 @@ static void pushCurrentToken(LinkedListString& tokenList, std::string& currentTo
     }
 }
 
-// ----- Tokenize -----
+
 LinkedListString tokenize(const std::string& inputLine)
 {
     LinkedListString tokenList;
